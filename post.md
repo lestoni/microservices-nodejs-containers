@@ -34,6 +34,49 @@ The awesome thing with Docker is the application stack you configure and run loc
 
 So how does this pertain to microservices and Node.js? Docker now becomes your platform to configure and manage all of these applications. They are configured and provisioned all together and you can essentially script out this process to make provisioning a complete microservices stack locally with one click. You can manage this with tools like [Docker Compose](https://github.com/docker/compose).
 
+To get started with Docker, Compose and Node.js here is a small example configuration. This is assuming you have the files located in the same directory as your Node.js application.
+
+Dockerfile:
+```
+# Pull base image from stock node image.
+FROM node
+
+# Maintainer
+MAINTAINER Robert Schultz <rschultz@ancestry.com>
+
+# Add the current working folder as a mapped folder at /usr/src/app
+ADD . /usr/src/app
+
+# Set the current working directory to the new mapped folder.
+WORKDIR /usr/src/app
+
+# Install your application's dependencies
+RUN npm install
+
+# Expose the node.js port to the Docker host.
+EXPOSE 3000
+
+# This is the stock express binary to start the app.
+CMD [ "bin/www" ]
+```
+
+docker-compose.yml:
+```
+web:
+  build: .
+  volumes:
+    - .:/usr/src/app
+  ports:
+    - "3000:3000"
+```
+
+Then you can simply issue the following:
+```
+$ docker-compose up
+```
+
+That should be it!
+
 ## Conclusion
 
 It’s an exciting time to be an engineer. Configuring, Building, Testing and Deploying applications is entering a new age and it’s really going to be awesome.
